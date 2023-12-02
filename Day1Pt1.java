@@ -11,26 +11,21 @@ class Day1 {
             String lastDigit = "";
             int sum = 0;
             while((line = file1.readLine()) != null) {
-                System.out.println("## Line read is: " + line);
                 for(int i = 0; i < line.length(); i++) {
                     if(Character.digit(line.charAt(i),10) >= 0) {
                         firstDigit = line.substring(i,i+1);
-                        System.out.println("firstDigit: "+firstDigit);
                         break;
                     }
                 }
                 for(int i = line.length()-1; i >=0; i--) {
                     if(Character.digit(line.charAt(i),10) >= 0) {
                         lastDigit = line.substring(i,i+1);
-                        System.out.println("lastDigit: " + lastDigit);
                         break;
                     }
                 }
                 String lineSum = firstDigit+lastDigit;
-                System.out.println("lineSum: " + lineSum);
                 sum += Integer.parseInt(lineSum);
             }
-            System.out.println("sum of calibration values is: " + sum);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
