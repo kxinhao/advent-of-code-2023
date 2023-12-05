@@ -3,7 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
-class Day1 {
+class Day2 {
 
     public static void main(String[] args) throws Exception {
         

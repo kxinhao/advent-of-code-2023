@@ -3,7 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
-class Day1 {
+class Day2 {
     public static final int RED_LIMIT = 12;
     public static final int GREEN_LIMIT = 13;
     public static final int BLUE_LIMIT = 14;
