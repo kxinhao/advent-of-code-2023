@@ -7,12 +7,12 @@ class Day2 {
 
     public static void main(String[] args) throws Exception {
         
-        BufferedReader file1 = new BufferedReader(new FileReader("day2_input.txt"));
+        BufferedReader file2 = new BufferedReader(new FileReader("day2_input.txt"));
         try{
             String line = null;
             int powerSum = 0;
             
-            while((line = file1.readLine()) != null) {
+            while((line = file2.readLine()) != null) {
                 String[] headerBody = line.split(":");
                 //int gameNo = Integer.parseInt(headerBody[0].split(" ")[1]);
                 String[] bodyData = headerBody[1].split(";");
@@ -51,7 +51,7 @@ class Day2 {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
-            file1.close();
+            file2.close();
         }
     }
 }

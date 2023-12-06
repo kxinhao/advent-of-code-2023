@@ -4,13 +4,13 @@ import java.io.IOException;
 
 class Day1 {
     public static void main(String[] args) throws Exception {
-        BufferedReader file1 = new BufferedReader(new FileReader("day1_input.txt"));
+        BufferedReader file2 = new BufferedReader(new FileReader("day1_input.txt"));
         try{
             String line = null;
             String firstDigit = "";
             String lastDigit = "";
             int sum = 0;
-            while((line = file1.readLine()) != null) {
+            while((line = file2.readLine()) != null) {
                 for(int i = 0; i < line.length(); i++) {
                     if(Character.digit(line.charAt(i),10) >= 0) {
                         firstDigit = line.substring(i,i+1);
@@ -29,7 +29,7 @@ class Day1 {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
-            file1.close();
+            file2.close();
         }
     }
 }
