@@ -2,6 +2,7 @@ import java.io.FileReader;
 import java.io.FileBuffer;
 import java.io.IOException;
 import java.awt.Point;
+import java.util.regex.*;
 
 public class Day3 {
     public static void main(String[] args) {
@@ -33,8 +34,9 @@ public class Day3 {
                         lineNo = lineNo + schematicChar;
                     } else if(!lineNo.isEmpty()){
                         wordEnd = new Point(j-1,i-1);
-                        if(
-                        validPartNoSum += Integer.parseInt(lineNo);
+                        if() {
+                            validPartNoSum += Integer.parseInt(lineNo);
+                        }
                         lineNo = "";
                     }
                 }
@@ -47,7 +49,7 @@ public class Day3 {
         }
     }
 
-    public boolean checkEdges(Point startPoint, Point endPoint, Character[][] schematic) {
+    public boolean validNum(Point startPoint, Point endPoint, Character[][] schematic) {
 
         // accounting for single digit numbers
         int startX = (int)startPoint.getX();
@@ -55,8 +57,20 @@ public class Day3 {
         int endX = (int)endPoint.getX();
         int endY = (int)endPoint.getY();
 
+        boolean validNum = false;
+
+        Pattern pattern = Pattern.compile("[^0-9.\s]");
+
         if(startY > 0 && endY < schematic.length-1 && startX > 0 && endX < schematic[0].length-1) {
-            
+            numbuffer:
+            for(int y = startY-1; y <= endY + 1; y++) {
+                for(int x = startX-1; x <= endX + 1; x++) {
+                    if(pattern.matcher(schematic[y][x]).find()) {
+                        validNum = true;
+                        break numbuffer;
+                    }
+                }
+            }
         }
 
         if(startY <= 0 || endY <= 0) {
@@ -69,5 +83,6 @@ public class Day3 {
 
         }
 
+        return validNum;
     }
 }
