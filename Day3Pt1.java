@@ -21,12 +21,6 @@ public class Day3 {
                 schematic.add(row);
             }
             char[][] schematic2D = new char[schematic.size()][];
-            /*
-            for(int i = 0; i < schematic.size(); i++) {
-                char[] row = schematic.get(i);
-                schematic2D[i] = row;
-            }
-            */
             schematic2D = schematic.toArray(schematic2D);
             for(int i = 0; i < schematic2D.length; i++) {
                 System.out.println("********** processing line " + i);
@@ -45,6 +39,7 @@ public class Day3 {
                         int xPoint = j - 1;
                         int yPoint = i;
                         wordEnd = new Point(xPoint, yPoint);
+                        System.out.println("completed number is: " + lineNo);
                         System.out.println("checking num validity");
                         if(isValidNum(wordStart, wordEnd, schematic2D)) {
                             System.out.println("lineNo: " + lineNo + " is valid, adding to sum: " + validPartNoSum);
@@ -52,8 +47,6 @@ public class Day3 {
                         } else {
                             System.out.println("lineNo: " + lineNo + " is not valid");
                         }
-                        System.out.println("startPoint is: " + wordStart + " and endPoint is: " + wordEnd);
-                        System.out.println("completed number is: " + lineNo);
                         lineNo = "";
                         System.out.println("checking cleared string buffer for lineNo: " + lineNo);
                     }
