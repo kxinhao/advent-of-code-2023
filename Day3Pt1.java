@@ -23,7 +23,7 @@ public class Day3 {
             char[][] schematic2D = new char[schematic.size()][];
             schematic2D = schematic.toArray(schematic2D);
             for(int i = 0; i < schematic2D.length; i++) {
-                System.out.println("********** processing line " + i);
+                System.out.println("********** processing line " + (i+1));
                 Point wordStart = null;
                 Point wordEnd = null;
                 String lineNo = "";
@@ -39,8 +39,7 @@ public class Day3 {
                         int xPoint = j - 1;
                         int yPoint = i;
                         wordEnd = new Point(xPoint, yPoint);
-                        System.out.println("completed number is: " + lineNo);
-                        System.out.println("checking num validity");
+                        System.out.println("!! completed number is: " + lineNo);
                         if(isValidNum(wordStart, wordEnd, schematic2D)) {
                             System.out.println("lineNo: " + lineNo + " is valid, adding to sum: " + validPartNoSum);
                             validPartNoSum += Integer.parseInt(lineNo);
@@ -48,11 +47,9 @@ public class Day3 {
                             System.out.println("lineNo: " + lineNo + " is not valid");
                         }
                         lineNo = "";
-                        System.out.println("checking cleared string buffer for lineNo: " + lineNo);
                     }
                 }
-                System.out.println("valid line sum of line " + i + " is: " + validPartNoSum);
-                System.out.println("########## end processing for line: " + i);
+                System.out.println("###### end processing of line " + (i+1) + ", valid value is: " + validPartNoSum);
             }
             System.out.println("Sum of schematic part numbers: "+validPartNoSum);
         }catch(IOException e) {
@@ -64,7 +61,6 @@ public class Day3 {
 
     public static boolean isValidNum(Point startPoint, Point endPoint, char[][] schematic) {
 
-        System.out.println("!!! entered isValidNum method");
         // accounting for single digit numbers
         int startX = (int)startPoint.getX();
         int startY = (int)startPoint.getY();
