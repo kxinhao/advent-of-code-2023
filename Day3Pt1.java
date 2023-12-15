@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,15 +31,28 @@ public class Day3 {
                 String lineNo = "";
                 for(int j = 0; j < schematic2D[i].length; j++) {
                     char schematicChar = schematic2D[i][j];
+                    int xPoint = j - 1;
+                    int yPoint = i;
                     //System.out.println("checking char: " + schematicChar);
                     if(Character.digit(schematicChar,10)>=0) {
                         if(lineNo.isEmpty()) {
                            wordStart = new Point(j,i); 
                         }
                         lineNo = lineNo + schematicChar;
+                        // for nums with last digit at EOL
+                        if(j == schematic2D[i].length - 1) {
+                            xPoint = j;
+                            wordEnd = new Point(xPoint, yPoint);
+                            fw.write("\n !! completed eol number is: " + lineNo);
+                            if(isValidNum(wordStart, wordEnd, schematic2D)) {
+                                fw.write("\n lineNo: " + lineNo + " is valid, adding to sum: " + validPartNoSum);
+                                validPartNoSum += Integer.parseInt(lineNo);
+                            } else {
+                                fw.write("\n lineNo: " + lineNo + " is not valid");
+                            }
+                        lineNo = "";
+                        }
                     } else if(!lineNo.isEmpty()){
-                        int xPoint = j - 1;
-                        int yPoint = i;
                         wordEnd = new Point(xPoint, yPoint);
                         fw.write("\n !! completed number is: " + lineNo);
                         if(isValidNum(wordStart, wordEnd, schematic2D)) {
@@ -50,7 +62,7 @@ public class Day3 {
                             fw.write("\n lineNo: " + lineNo + " is not valid");
                         }
                         lineNo = "";
-                    }
+                    } 
                 }
                 fw.write("\n ###### end processing of line " + (i+1) + ", valid value is: " + validPartNoSum);
             }
