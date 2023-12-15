@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.util.regex.*;
 import java.util.ArrayList;
 
+// find gear position, check above, below and the row it is on for each number and check exactly 2 numbers adjacent to it
 public class Day3 {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader("day3_input.txt")); 
