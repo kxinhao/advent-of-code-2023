@@ -6,21 +6,28 @@ import java.awt.Point;
 import java.util.regex.*;
 import java.util.ArrayList;
 
-public class Day3 {
+public class Day3Pt2 {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader("day3_input.txt")); 
         FileWriter fw = new FileWriter("Day3Pt2_Output.txt");
         int validPartNoSum = 0;
         ArrayList<char[]> schematic = new ArrayList<char[]>(); 
+        Map<Integer,Point> gearMap = new HashMap<Integer,Point>();
         String line = null;
 
         try {
+            int lineInd = 0;
+            int gearCount = 0;
             while((line = br.readLine()) != null) {
                 char[] row = new char[line.length()]; 
                 for(int i = 0; i < line.length(); i++) {
+                    if(line.CharAt(i)) {
+                        gearMap.add(gearCount, new Point(lineInd,i));
+                    }
                     row[i] = line.charAt(i);
                 }
                 schematic.add(row);
+                lineInd++;
             }
             char[][] schematic2D = new char[schematic.size()][];
             schematic2D = schematic.toArray(schematic2D);
@@ -109,7 +116,7 @@ public class Day3 {
             bufferEndX = endX;
         }
 
-        Pattern pattern = Pattern.compile("[^0-9.\s]");
+        Pattern pattern = Pattern.compile("[^0-9.]");
 
         for (int y = bufferStartY; y <= bufferEndY; y++) {
             for (int x = bufferStartX; x <= bufferEndX; x++) {

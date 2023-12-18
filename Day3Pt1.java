@@ -110,7 +110,7 @@ public class Day3 {
             bufferEndX = endX;
         }
 
-        Pattern pattern = Pattern.compile("[^0-9.\s]");
+        Pattern pattern = Pattern.compile("[^0-9.]");
 
         for (int y = bufferStartY; y <= bufferEndY; y++) {
             for (int x = bufferStartX; x <= bufferEndX; x++) {
