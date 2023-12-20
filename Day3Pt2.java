@@ -10,19 +10,21 @@ public class Day3Pt2 {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader("day3_input.txt")); 
         FileWriter fw = new FileWriter("Day3Pt2_Output.txt");
-        int validPartNoSum = 0;
+        int gearRatioSum = 0;
         ArrayList<char[]> schematic = new ArrayList<char[]>(); 
         Map<Integer,Point> gearMap = new HashMap<Integer,Point>();
         String line = null;
+        int lineInd = 0;
+        int gearCount = 0;
 
         try {
-            int lineInd = 0;
-            int gearCount = 0;
+            Pattern pattern = Pattern.compile("[*]");
             while((line = br.readLine()) != null) {
                 char[] row = new char[line.length()]; 
                 for(int i = 0; i < line.length(); i++) {
-                    if(line.CharAt(i)) {
-                        gearMap.add(gearCount, new Point(lineInd,i));
+                    if(pattern.matcher(""+line.CharAt(i)).find()) {
+                        gearCount++;
+                        gearMap.add(gearCount, new Point(lineInd, i));
                     }
                     row[i] = line.charAt(i);
                 }
@@ -31,8 +33,16 @@ public class Day3Pt2 {
             }
             char[][] schematic2D = new char[schematic.size()][];
             schematic2D = schematic.toArray(schematic2D);
+            // check each gear for adjacent numbers
+            for(int i = 0; i < gearMap.size(); i++) {
+                Point gearCoords = gearMap.get(i);
+                int gearX = (int)gearCoords.getX();
+                int gearY = (int)gearCoords.getY();
+                int gearRatio = getGearRatio();
+                gearRatioSum += gearRatio;
+            }
+
             for(int i = 0; i < schematic2D.length; i++) {
-                fw.write("\n ********** processing line " + (i+1));
                 Point wordStart = null;
                 Point wordEnd = null;
                 String lineNo = "";
@@ -43,7 +53,7 @@ public class Day3Pt2 {
                     //System.out.println("checking char: " + schematicChar);
                     if(Character.digit(schematicChar,10)>=0) {
                         if(lineNo.isEmpty()) {
-                           wordStart = new Point(j,i); 
+                            wordStart = new Point(j,i); 
                         }
                         lineNo = lineNo + schematicChar;
                         // for nums with last digit at EOL
@@ -57,7 +67,7 @@ public class Day3Pt2 {
                             } else {
                                 fw.write("\n lineNo: " + lineNo + " is not valid");
                             }
-                        lineNo = "";
+                            lineNo = "";
                         }
                     } else if(!lineNo.isEmpty()){
                         wordEnd = new Point(xPoint, yPoint);
