@@ -4,12 +4,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.Point;
 import java.util.regex.*;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.logging.*;
 
 public class Day3Pt2 {
+
+    private static final Logger LOG = Logger.getLogger(Day3Pt2.class.getName());
+    private static FileHandler fh;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader("day3_input.txt")); 
-        FileWriter fw = new FileWriter("Day3Pt2_Output.txt");
         int gearRatioSum = 0;
         ArrayList<char[]> schematic = new ArrayList<char[]>(); 
         Map<Integer,Point> gearMap = new HashMap<Integer,Point>();
@@ -18,13 +25,16 @@ public class Day3Pt2 {
         int gearCount = 0;
 
         try {
+            fh = new FileHandler("day3pt2.log");
+            LOG.addHandler(fh);
+            fh.setFormatter(new SimpleFormatter());
             Pattern pattern = Pattern.compile("[*]");
             while((line = br.readLine()) != null) {
                 char[] row = new char[line.length()]; 
                 for(int i = 0; i < line.length(); i++) {
-                    if(pattern.matcher(""+line.CharAt(i)).find()) {
+                    if(pattern.matcher(""+line.charAt(i)).find()) {
+                        gearMap.put(Integer.valueOf(gearCount), new Point(i, lineInd));
                         gearCount++;
-                        gearMap.add(gearCount, new Point(lineInd, i));
                     }
                     row[i] = line.charAt(i);
                 }
@@ -38,104 +48,126 @@ public class Day3Pt2 {
                 Point gearCoords = gearMap.get(i);
                 int gearX = (int)gearCoords.getX();
                 int gearY = (int)gearCoords.getY();
-                int gearRatio = getGearRatio();
+                LOG.info("\n checking gear "+i+" in line "+gearY);
+                int gearRatio = calculateGearRatio(gearX, gearY, schematic2D);
                 gearRatioSum += gearRatio;
+                LOG.info("Current gear ratio sum: " + gearRatioSum);
             }
 
-            for(int i = 0; i < schematic2D.length; i++) {
-                Point wordStart = null;
-                Point wordEnd = null;
-                String lineNo = "";
-                for(int j = 0; j < schematic2D[i].length; j++) {
-                    char schematicChar = schematic2D[i][j];
-                    int xPoint = j - 1;
-                    int yPoint = i;
-                    //System.out.println("checking char: " + schematicChar);
-                    if(Character.digit(schematicChar,10)>=0) {
-                        if(lineNo.isEmpty()) {
-                            wordStart = new Point(j,i); 
-                        }
-                        lineNo = lineNo + schematicChar;
-                        // for nums with last digit at EOL
-                        if(j == schematic2D[i].length - 1) {
-                            xPoint = j;
-                            wordEnd = new Point(xPoint, yPoint);
-                            fw.write("\n !! completed eol number is: " + lineNo);
-                            if(isValidNum(wordStart, wordEnd, schematic2D)) {
-                                fw.write("\n lineNo: " + lineNo + " is valid, adding to sum: " + validPartNoSum);
-                                validPartNoSum += Integer.parseInt(lineNo);
-                            } else {
-                                fw.write("\n lineNo: " + lineNo + " is not valid");
-                            }
-                            lineNo = "";
-                        }
-                    } else if(!lineNo.isEmpty()){
-                        wordEnd = new Point(xPoint, yPoint);
-                        fw.write("\n !! completed number is: " + lineNo);
-                        if(isValidNum(wordStart, wordEnd, schematic2D)) {
-                            fw.write("\n lineNo: " + lineNo + " is valid, adding to sum: " + validPartNoSum);
-                            validPartNoSum += Integer.parseInt(lineNo);
-                        } else {
-                            fw.write("\n lineNo: " + lineNo + " is not valid");
-                        }
-                        lineNo = "";
-                    } 
-                }
-                fw.write("\n ###### end processing of line " + (i+1) + ", valid value is: " + validPartNoSum);
-            }
-            fw.write("\n Sum of schematic part numbers: "+validPartNoSum);
+        LOG.info("\n Sum of gear ratios: "+gearRatioSum);
         }catch(IOException e) {
-            System.out.println(e.getMessage());
+            LOG.info(e.getMessage());
         }finally {
             br.close();
-            fw.close();
         }
     }
 
-    public static boolean isValidNum(Point startPoint, Point endPoint, char[][] schematic) {
+    public static int calculateGearRatio(int gearX, int gearY, char[][] schematic) {
 
-        // accounting for single digit numbers
-        int startX = (int)startPoint.getX();
-        int startY = (int)startPoint.getY();
-        int endX = (int)endPoint.getX();
-        int endY = (int)endPoint.getY();
-        //System.out.println("start coords are: " + startX + ", " + startY);
-        //System.out.println("end coords are: " + endX + ", " + endY);
-        int bufferStartX = startX - 1;
-        int bufferStartY = startY - 1;
-        int bufferEndX = endX + 1;
-        int bufferEndY = endY + 1;
+        int gearRatio = 0;
+        int bufferStartX = gearX - 1;
+        int bufferStartY = gearY - 1;
+        int bufferEndX = gearX + 1;
+        int bufferEndY = gearY + 1;
 
-        boolean isValidNum = false;
-
+        LOG.info("X: " + gearX + " , Y:" + gearY); 
         // accounting for edge cases
         // top of file
-        if (startY <= 0 || endY <= 0) { 
-            bufferStartY = startY;
+        if (gearY <= 0) { 
+            bufferStartY = gearY;
         }
         // bottom of file
-        if (startY >= schematic.length-1 || endY >= schematic.length-1) {
-            bufferEndY = endY;
+        if (gearY >= schematic.length-1) {
+            bufferEndY = gearY;
         }
         // left
-        if (startX <= 0 || endX <= 0) {
-            bufferStartX = startX;
+        if (gearX <= 0) {
+            bufferStartX = gearX;
         }
         // right
-        if (startX >= schematic[0].length - 1 || endX >= schematic[0].length - 1) {
-            bufferEndX = endX;
+        if (gearX >= schematic[0].length - 4) {
+            bufferEndX = gearX;
         }
+        LOG.info("bufferStartY: " + bufferStartY + " , bufferEndY: " + bufferEndY);
+        LOG.info("bufferStartX: " + bufferStartX + " , bufferEndX: " + bufferEndX);
 
-        Pattern pattern = Pattern.compile("[^0-9.]");
+        Pattern digit = Pattern.compile("[0-9]");
+ /*       
+        String numOne = "";
+        String numTwo = "";
+        boolean numOneDone = false;
+        boolean numTwoDone = false;
+        */
+        String number = "";
+        int startInd = 0, endInd = 0;
+        List<Integer> adjacentNumList = new ArrayList<Integer>();
 
         for (int y = bufferStartY; y <= bufferEndY; y++) {
             for (int x = bufferStartX; x <= bufferEndX; x++) {
-                if(pattern.matcher(""+schematic[y][x]).find()) {
-                    isValidNum = true;
-                    return isValidNum;
+                if(digit.matcher(""+schematic[y][x]).find()) {
+                    // adjacent num found, complete num
+                    number = findNum(x, schematic[y]); 
+                    LOG.info("num creating.. : " + number);
+                    adjacentNumList.add(Integer.valueOf(number));
+                    x = x + number.length();
                 }
             }
         }
-        return isValidNum;
+
+        if(adjacentNumList.size() == 2) {
+            gearRatio = adjacentNumList.get(0) * adjacentNumList.get(1);
+        }
+/*
+                if((endPattern.matcher(""+schematic[y][x]).find() || x == bufferEndX) && !number.isEmpty()) {
+                    endInd = x-1;
+                    if(x == bufferEndX) {
+                        endInd = x;
+                    }
+                    LOG.info("formed no: " + number + " with startX: " + startInd + ", endX: " + endInd);
+                    if(startInd <= gearX+1 && endInd >= gearX-1 && !numOneDone) {
+                        LOG.info("Formed first Num: " + number);
+                        numOneDone = true;
+                        numOne = number;
+                    } else if (startInd <= gearX+1 && endInd >= gearX-1 && !numTwoDone) {
+                        LOG.info("formed second Num: " + number);
+                        numTwoDone = true;
+                        numTwo = number;
+                    }
+                    number = "";
+                    startInd = 0;
+                    endInd = 0;
+                }
+            }
+        }
+
+        LOG.info("Num1: " + numOne + " , " + "Num2: " + numTwo);
+
+        if(!numOne.isEmpty() && !numTwo.isEmpty()) {
+            gearRatio = Integer.parseInt(numOne) * Integer.parseInt(numTwo);
+        }
+*/
+        LOG.info("gearRatio: " + gearRatio);
+        LOG.info("==================================================================================");
+        return gearRatio;
+    }
+
+    public static String findNum(int x, char[] schematicLine) {
+        StringBuffer sb = new StringBuffer();
+        int xPos = x;
+        LOG.info("xPos = " + xPos);
+        Pattern endPattern = Pattern.compile("[^0-9]");
+        while(!endPattern.matcher(""+schematicLine[xPos]).find() && xPos>0) {
+            xPos--;
+            LOG.info("xPos = " + xPos);
+        }
+        if(endPattern.matcher(""+schematicLine[xPos]).find()) {
+            xPos++;
+        }
+        while(!endPattern.matcher(""+schematicLine[xPos]).find() && xPos<schematicLine.length) {
+            sb.append(schematicLine[xPos]);
+            xPos++;
+            LOG.info("xPos = " + xPos);
+        }
+        return sb.toString();
     }
 }
