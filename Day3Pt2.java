@@ -16,7 +16,7 @@ public class Day3Pt2 {
     private static FileHandler fh;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("day3_input.txt")); 
+        BufferedReader br = new BufferedReader(new FileReader("day3_input_ex.txt")); 
         int gearRatioSum = 0;
         ArrayList<char[]> schematic = new ArrayList<char[]>(); 
         Map<Integer,Point> gearMap = new HashMap<Integer,Point>();
@@ -107,7 +107,6 @@ public class Day3Pt2 {
                 if(digit.matcher(""+schematic[y][x]).find()) {
                     // adjacent num found, complete num
                     number = findNum(x, schematic[y]); 
-                    LOG.info("num creating.. : " + number);
                     adjacentNumList.add(Integer.valueOf(number));
                     x = x + number.length();
                 }
@@ -117,35 +116,6 @@ public class Day3Pt2 {
         if(adjacentNumList.size() == 2) {
             gearRatio = adjacentNumList.get(0) * adjacentNumList.get(1);
         }
-/*
-                if((endPattern.matcher(""+schematic[y][x]).find() || x == bufferEndX) && !number.isEmpty()) {
-                    endInd = x-1;
-                    if(x == bufferEndX) {
-                        endInd = x;
-                    }
-                    LOG.info("formed no: " + number + " with startX: " + startInd + ", endX: " + endInd);
-                    if(startInd <= gearX+1 && endInd >= gearX-1 && !numOneDone) {
-                        LOG.info("Formed first Num: " + number);
-                        numOneDone = true;
-                        numOne = number;
-                    } else if (startInd <= gearX+1 && endInd >= gearX-1 && !numTwoDone) {
-                        LOG.info("formed second Num: " + number);
-                        numTwoDone = true;
-                        numTwo = number;
-                    }
-                    number = "";
-                    startInd = 0;
-                    endInd = 0;
-                }
-            }
-        }
-
-        LOG.info("Num1: " + numOne + " , " + "Num2: " + numTwo);
-
-        if(!numOne.isEmpty() && !numTwo.isEmpty()) {
-            gearRatio = Integer.parseInt(numOne) * Integer.parseInt(numTwo);
-        }
-*/
         LOG.info("gearRatio: " + gearRatio);
         LOG.info("==================================================================================");
         return gearRatio;
@@ -154,11 +124,9 @@ public class Day3Pt2 {
     public static String findNum(int x, char[] schematicLine) {
         StringBuffer sb = new StringBuffer();
         int xPos = x;
-        LOG.info("xPos = " + xPos);
         Pattern endPattern = Pattern.compile("[^0-9]");
         while(!endPattern.matcher(""+schematicLine[xPos]).find() && xPos>0) {
             xPos--;
-            LOG.info("xPos = " + xPos);
         }
         if(endPattern.matcher(""+schematicLine[xPos]).find()) {
             xPos++;
@@ -166,8 +134,8 @@ public class Day3Pt2 {
         while(!endPattern.matcher(""+schematicLine[xPos]).find() && xPos<schematicLine.length) {
             sb.append(schematicLine[xPos]);
             xPos++;
-            LOG.info("xPos = " + xPos);
         }
+        LOG.info("Num found is: " + sb.toString());
         return sb.toString();
     }
 }
