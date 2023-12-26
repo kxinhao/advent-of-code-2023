@@ -1,13 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.awt.Point;
-import java.util.regex.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.regex.*;
 import java.util.logging.*;
 
 public class Day3Pt2 {
