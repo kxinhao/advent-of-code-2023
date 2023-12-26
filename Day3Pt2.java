@@ -16,7 +16,7 @@ public class Day3Pt2 {
     private static FileHandler fh;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("day3_input_ex.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("day3_input.txt"));
         int gearRatioSum = 0;
         ArrayList<char[]> schematic = new ArrayList<char[]>();
         Map<Integer, Point> gearMap = new HashMap<Integer, Point>();
@@ -48,7 +48,8 @@ public class Day3Pt2 {
                 Point gearCoords = gearMap.get(i);
                 int gearX = (int) gearCoords.getX();
                 int gearY = (int) gearCoords.getY();
-                LOG.info("\n checking gear " + i + " in line " + gearY);
+                LOG.info("\n ================================================================");
+                LOG.info("\n checking gear " + (i+1) + " in line " + (gearY+1));
                 int gearRatio = calculateGearRatio(gearX, gearY, schematic2D);
                 gearRatioSum += gearRatio;
                 LOG.info("Current gear ratio sum: " + gearRatioSum);
@@ -70,7 +71,7 @@ public class Day3Pt2 {
         int bufferEndX = gearX + 1;
         int bufferEndY = gearY + 1;
 
-        LOG.info("X: " + gearX + " , Y:" + gearY);
+        LOG.info("X: " + (gearX+1) + " , Y:" + (gearY+1));
         // accounting for edge cases
         // top of file
         if (gearY <= 0) {
@@ -88,26 +89,18 @@ public class Day3Pt2 {
         if (gearX >= schematic[0].length - 1) {
             bufferEndX = gearX;
         }
-        LOG.info("bufferStartY: " + bufferStartY + " , bufferEndY: " + bufferEndY);
-        LOG.info("bufferStartX: " + bufferStartX + " , bufferEndX: " + bufferEndX);
+        LOG.info("bufferStart: (" + (bufferStartX+1) + ", " + (bufferStartY+1) + ") , bufferEnd: (" + (bufferEndX+1) +", " + (bufferEndY+1)+")");
 
         Pattern digit = Pattern.compile("[0-9]");
-        /*
-         * String numOne = "";
-         * String numTwo = "";
-         * boolean numOneDone = false;
-         * boolean numTwoDone = false;
-         */
-        String number = "";
         List<Integer> adjacentNumList = new ArrayList<Integer>();
 
         for (int y = bufferStartY; y <= bufferEndY; y++) {
             for (int x = bufferStartX; x <= bufferEndX; x++) {
+                LOG.info("buffer check position: (" + (x+1) + ", " + (y+1) + ")");
                 if (digit.matcher("" + schematic[y][x]).find()) {
                     // adjacent num found, complete num
-                    number = findNum(x, schematic[y]);
-                    adjacentNumList.add(Integer.valueOf(number));
-                    x = x + number.length();
+                    int xPos = findNum(x, schematic[y], adjacentNumList);
+                    x = xPos;
                 }
             }
         }
@@ -116,11 +109,11 @@ public class Day3Pt2 {
             gearRatio = adjacentNumList.get(0) * adjacentNumList.get(1);
         }
         LOG.info("gearRatio: " + gearRatio);
-        LOG.info("==================================================================================");
         return gearRatio;
     }
 
-    public static String findNum(int x, char[] schematicLine) {
+    // using position of digit adjacent to gear, travel back and forth to form number and return x value after num
+    public static int findNum(int x, char[] schematicLine, List<Integer> adjacentNumList) {
         StringBuffer sb = new StringBuffer();
         int xPos = x;
         Pattern endPattern = Pattern.compile("[^0-9]");
@@ -132,10 +125,13 @@ public class Day3Pt2 {
         }
         while (xPos < schematicLine.length && !endPattern.matcher("" + schematicLine[xPos]).find()) {
             sb.append(schematicLine[xPos]);
-            LOG.info("adding digit: "+schematicLine[xPos]);
             xPos++;
         }
         LOG.info("Num found is: " + sb.toString());
-        return sb.toString();
+        // increment x value by number length; fix to prevent duplicate count and overshot of x increment
+        x = Math.min(xPos, schematicLine.length-1);
+        LOG.info("Next x position is: " + x);
+        adjacentNumList.add(Integer.valueOf(sb.toString()));
+        return x; 
     }
 }
