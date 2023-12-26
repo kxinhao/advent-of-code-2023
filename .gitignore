@@ -1,0 +1,5 @@
+# ignore log file
+*.log
+
+# ignore input txt files
+*_input*.txt
